@@ -1,0 +1,28 @@
+[package]
+name = "luex"
+version = "0.1.0"
+edition = "2021"
+description = "Runs Lua source directly from a zip archive (with an optional shebang line) or a local directory, like `python <dir>`/PEX for Lua."
+
+[[bin]]
+name = "luex"
+path = "src/main.rs"
+
+[dependencies]
+# Real, unmodified Lua 5.4 (built from vendored C source - no system Lua
+# needed, and upstream point releases can be picked up by bumping this).
+mlua = { version = "0.11", features = ["lua54", "vendored"] }
+
+# Reads the central directory from the *end* of the file, so a shebang (or
+# any other data) glued onto the front of the archive is transparently
+# ignored - this is exactly what makes the "shebang + zip" trick work.
+zip = { version = "2", default-features = false, features = ["deflate"] }
+
+rustyline = "18"
+anyhow = "1"
+
+[profile.release]
+lto = true
+strip = true
+opt-level = "z"
+panic = "abort"
