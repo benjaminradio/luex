@@ -12,7 +12,7 @@ fn main() -> ExitCode {
     match run() {
         Ok(()) => ExitCode::SUCCESS,
         Err(e) => {
-            eprintln!("luapex: {e}");
+            eprintln!("luex: {e}");
             ExitCode::FAILURE
         }
     }
@@ -20,7 +20,7 @@ fn main() -> ExitCode {
 
 fn run() -> anyhow::Result<()> {
     let raw_args: Vec<String> = env::args().collect();
-    let exe = raw_args.first().cloned().unwrap_or_else(|| "luapex".to_string());
+    let exe = raw_args.first().cloned().unwrap_or_else(|| "luex".to_string());
     let lua = Lua::new();
 
     match raw_args.get(1) {
@@ -43,7 +43,7 @@ fn run() -> anyhow::Result<()> {
     Ok(())
 }
 
-/// `luapex somedir` runs `somedir/init.lua`, exactly like `python somedir`
+/// `luex somedir` runs `somedir/init.lua`, exactly like `python somedir`
 /// runs `somedir/__main__.py`. No archive is involved.
 fn run_directory(
     lua: &Lua,
@@ -61,7 +61,7 @@ fn run_directory(
     runtime::run_chunk(lua, &chunk_name, &src, script_args)
 }
 
-/// `luapex somefile` where `somefile` is either:
+/// `luex somefile` where `somefile` is either:
 ///   - a zip archive (optionally with a shebang glued to the front and the
 ///     executable bit set) containing a top-level `init.lua`, or
 ///   - a plain Lua source file (optionally with a shebang).
