@@ -1,4 +1,4 @@
-# luapex
+# luex
 
 A Lua runtime that runs a program straight out of a **zip archive** (with an
 optional shebang line glued to the front and the executable bit set) the
@@ -14,7 +14,7 @@ source) and `rustyline` for the REPL.
 
 ```sh
 cargo build --release
-# binary at target/release/luapex
+# binary at target/release/luex
 ```
 
 `mlua`'s `vendored` feature compiles Lua's C sources itself, so you need a C
@@ -24,10 +24,10 @@ install required.
 ## Usage
 
 ```
-luapex                 # interactive REPL
-luapex script.lua args...   # run a plain Lua file (shebang stripped if present)
-luapex myapp args...        # run a zip archive (shebang optional) — myapp/init.lua
-luapex somedir/ args...     # run somedir/init.lua directly off disk
+luex                      # interactive REPL
+luex script.lua args...   # run a plain Lua file (shebang stripped if present)
+luex myapp args...        # run a zip archive (shebang optional) — myapp/init.lua
+luex somedir/ args...     # run somedir/init.lua directly off disk
 ```
 
 ## Packaging an archive
@@ -43,7 +43,7 @@ cd ..
 zip -r app.zip myapp/*        # or: (cd myapp && zip -r ../app.zip .)
 
 # Glue a shebang onto the front and mark it executable:
-{ printf '#!/usr/bin/env luapex\n'; cat app.zip; } > myapp.run
+{ printf '#!/usr/bin/env luex\n'; cat app.zip; } > myapp.run
 chmod +x myapp.run
 rm app.zip
 
@@ -53,11 +53,11 @@ rm app.zip
 ```
 
 This works because the zip format's index (the *End of Central Directory*
-record) lives at the **end** of the file. `luapex` (via the `zip` crate)
+record) lives at the **end** of the file. `luex` (via the `zip` crate)
 locates it by scanning backward from the end, so whatever bytes — a
 shebang line, a whole other executable — sit in front of the archive data
 are simply ignored when reading it, and the OS's shebang mechanism just
-execs `luapex myapp.run`, handing the *whole* file back to `luapex` to
+execs `luex myapp.run`, handing the *whole* file back to `luex` to
 re-read and interpret itself.
 
 ### `require` inside an archive
@@ -82,17 +82,17 @@ myapp.run.deps/
   # mylib.dll on Windows, mylib.dylib on macOS — build per platform
 ```
 
-Adjust the actual directory layout to taste; `luapex` just prepends
+Adjust the actual directory layout to taste; `luex` just prepends
 `<dir-containing-the-archive>/?.<native-ext>` to `package.cpath`, where
 `<native-ext>` is `so`, `dll`, or `dylib` depending on the platform
-`luapex` itself was built for. `require("mylib")` then finds it via Lua's
+`luex` itself was built for. `require("mylib")` then finds it via Lua's
 normal C-loader searcher, unmodified.
 
 ### Precompiled bytecode
 
 Since you said these archives don't need to be cross-platform, you can
 swap any `.lua` file in the zip for its precompiled bytecode (`luac -o
-foo.lua foo.lua` on a matching build of `luapex`'s Lua) for faster cold
+foo.lua foo.lua` on a matching build of `luex`'s Lua) for faster cold
 starts — the loader doesn't care, `mlua`'s `load` accepts either text or
 binary chunks transparently. Just remember bytecode is tied to the exact
 Lua build (version, integer size, endianness) that produced it.
@@ -109,7 +109,7 @@ expect from `lua -i`:
   `incomplete_input` flag, the same signal `mlua` exposes specifically for
   building REPLs, rather than pattern-matching error text
 - Ctrl-C abandons the current (possibly multi-line) entry; Ctrl-D exits
-- history persists to `~/.luapex_history`
+- history persists to `~/.luex_history`
 
 ## Design notes / limitations
 
