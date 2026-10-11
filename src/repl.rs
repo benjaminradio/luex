@@ -14,7 +14,7 @@ use std::path::PathBuf;
 fn history_path() -> Option<PathBuf> {
     std::env::var_os("HOME")
         .or_else(|| std::env::var_os("USERPROFILE"))
-        .map(|h| PathBuf::from(h).join(".luapex_history"))
+        .map(|h| PathBuf::from(h).join(".luex_history"))
 }
 
 pub fn run(lua: &Lua) -> anyhow::Result<()> {
@@ -28,7 +28,7 @@ pub fn run(lua: &Lua) -> anyhow::Result<()> {
         .load("return _VERSION")
         .eval()
         .unwrap_or_else(|_| "Lua".to_string());
-    println!("{version}  (luapex REPL, Ctrl-D to exit)");
+    println!("{version}  (luex REPL, Ctrl-D to exit)");
 
     'entries: loop {
         let mut buffer = String::new();
